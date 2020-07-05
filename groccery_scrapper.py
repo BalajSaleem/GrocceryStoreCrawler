@@ -87,8 +87,9 @@ class crawler:
         for item in items:
             name = item.find_element_by_class_name("productname").text
             price = item.find_element_by_class_name("productprice").text
+            imgUrl = item.find_element_by_class_name("productimg").find_element_by_tag_name("img").get_attribute("src")
             if name and price:
-                print('PRODUCT: ' + name + '\t\t\t PRICE: ' + price)
+                print('PRODUCT: ' + name + '\t\t PRICE: ' + price + '\t\tIMG URL: ' + imgUrl)
 
         self.driver.quit()
 
