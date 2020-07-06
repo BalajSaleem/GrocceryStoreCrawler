@@ -40,10 +40,12 @@ class crawler:
     url = ""
     driver = webdriver.Chrome("chromedriver.exe")
 
-    def __init__(self, url="https://metro-online.pk/store/frozen-food/frozen-ready-to-cook/kebab-and-koftas"):
+    def __init__(self, url="https://metro-online.pk/"):
         print('crawler made')
         self.url = url
         self.driver.get(url)
+        self.driver.maximize_window()
+
 
     def scroll_down(self):
         """A method for scrolling the page."""
@@ -67,7 +69,7 @@ class crawler:
 
             last_height = new_height
 
-    def crawl(self):
+    def scrape(self):
 
         try:
             element = WebDriverWait(self.driver, 20).until(
@@ -78,10 +80,6 @@ class crawler:
 
         finally:
             print('ok done')
-        # print(driver.title)
-        # p_elements = driver.find_element_by_id("tns5")
-        # print(driver.page_source)
-        # time.sleep(10)
 
         print(len(items))
         for item in items:
@@ -93,6 +91,45 @@ class crawler:
 
         self.driver.quit()
 
+    def crawl(self):
+        item = ''
+        try:
+            element = WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "submenuinner"))
+            )
+            self.scroll_down()
+            items = self.driver.find_elements_by_class_name("submenuinner")
+            # item = self.driver.find_element_by_link_text("Fresh Food")
+            # item = item.find_element_by_xpath("..")
+            #print('top text: ' + item.text)
+            #subitems = item.find_elements_by_tag_name("ul")
+            #print('subitems len:' + str(len(subitems)))
+        finally:
+            print('ok done with crawling')
+
+        for item in items:
+            name = item.find_element_by_xpath("..").find_element_by_xpath("..").find_element_by_tag_name('span').text
+            subitems = item.find_elements_by_tag_name("ul")
+            print('ITEM NAME: ' + name + ' ; TOTAL SUBITEMS:' + str(len(subitems)))
+            for subitem in subitems:
+                subitem_name = subitem.find_element_by_xpath("..").find_element_by_tag_name('h6').find_element_by_tag_name('a').get_attribute('text')
+                links = subitem.find_elements_by_tag_name('li')
+                print('SUBITEM NAME:' + subitem_name + ' ; TOTAL LINKS:' + str(len(links)))
+                print('')
+                for link in links:
+                    a = link.find_element_by_tag_name('a')
+                    print('LINK NAME: ' + a.get_attribute("text") + '; LINK: ' + a.get_attribute("href"))
+                    # a.click()
+                    #self.scrape()
+
+
+
+
+
+#TODO
+#if 0 elements in the subitems list, click on the link
+
 
 metroCrawler = crawler()
 metroCrawler.crawl()
+#metroCrawler.crawl()
