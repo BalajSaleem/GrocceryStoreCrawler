@@ -50,7 +50,7 @@ class Crawler:
         print('crawler made')
         self.url = url
         self.driver.get(url)
-        #self.driver.maximize_window()
+        # self.driver.maximize_window()
 
     def scroll_down(self):
         """A method for scrolling the page."""
@@ -96,7 +96,7 @@ class Crawler:
             if name and price:
                 print('PRODUCT: ' + name + '\t\t PRICE: ' + price + '\t\tIMG URL: ' + imgUrl)
                 product_list.append({"p_cat": p_cat, "p_name": name, "p_price": price, "p_img": imgUrl})
-                #product_list.append({"p_name": name})
+                # product_list.append({"p_name": name})
 
         # self.driver.quit()
         return product_list
@@ -141,6 +141,7 @@ class Crawler:
         self.driver.close()
 
 
+# for the sub_array belonging to the thread, nests another list within to contain items from a certain link
 def get_metro_data(sub_array, thread_no):
     print('Thread ' + str(thread_no) + ' Started')
     time.sleep(1)
@@ -158,7 +159,7 @@ def split_link_array(total_splits, all_links):
         print('==============SPLIT ' + str(i) + ' ==============')
         split = all_links[split_len * i: split_len * (i + 1)]
         print_links(split)
-        print('============================')
+        print('===============================================')
         # get_metro_data(split)
         # create the threads
         t = threading.Thread(target=get_metro_data, args=(split, i))
@@ -181,18 +182,22 @@ def print_final_list(combined_list):
             for category in combined_list[i]:
                 if category is not None:
                     for product in category:
-                        print(product["p_cat"] + ' | ' + product["p_name"] + ' | ' + product["p_price"] + ' | ' + product["p_img"])
-                        f.write(product["p_cat"] + ';' + product["p_name"] + ';' + product["p_price"] + ';' + product["p_img"] + '\n')
+                        print(
+                            product["p_cat"] + ' | ' + product["p_name"] + ' | ' + product["p_price"] + ' | ' + product[
+                                "p_img"])
+                        f.write(product["p_cat"] + ';' + product["p_name"] + ';' + product["p_price"] + ';' + product[
+                            "p_img"] + '\n')
+    f.close()
 
 
 collective_list = []
 thread_list = []
 crawler_number = 2
 
-# get links
+st_time = time.time()
 metroCrawler = Crawler()
 links = metroCrawler.crawl()
-#links = links[0:3]
+links = links[0:10]
 print_links(links)
 metroCrawler.close()
 
@@ -203,8 +208,13 @@ for t in thread_list:
 
 print(collective_list)
 print_final_list(collective_list)
-print('Test completed!')
 
+print('Test completed! Time spent =' + str(time.time() - st_time))
+
+# with open("crawler_log.txt", "a") as f:
+#     print("Crawlers: " + str(crawler_number) + " \t time: " + str(time.time() - st_time))
+#     f.write("Crawlers: " + str(crawler_number) + " \t time: " + str(time.time() - st_time))
+# f.close()
 #
 # for i in range(5):
 #     ting = [{'name': 'baby', 'id': i*i}, {'name': 'shmurda', 'id': i*i*i} ]
@@ -270,7 +280,6 @@ print('Test completed!')
 # # Wait for all thre<ads to complete
 # for thread in thread_list:
 #     thread.join()
-
 
 # TODO
 # write to csv
